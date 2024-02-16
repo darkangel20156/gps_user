@@ -72,13 +72,14 @@ public class MainActivity extends AppCompatActivity {
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             updateView(lastKnownLocation);
 
-            // Push data
-            pushData(lastKnownLocation);
+//            pushData(lastKnownLocation);
             //Get GPS information every three seconds
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 8f, new LocationListener() {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
                     updateView(location);
+                    // Push data
+                    pushData(location);
                 }
             });
         }
