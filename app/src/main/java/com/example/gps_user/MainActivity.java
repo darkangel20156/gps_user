@@ -28,11 +28,6 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    public static final String NETWORK_PROVIDER = "network";
-    public static final String GPS_PROVIDER = "gps";
-    public static final String PASSIVE_PROVIDER = "passive";
-    public static final String FUSED_PROVIDER = "fused";
-
     private LocationManager locationManager;
     private TextView showInfo;
     
