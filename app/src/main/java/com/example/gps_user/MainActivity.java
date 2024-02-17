@@ -39,9 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
-
-    private String filename = "SampleFile.txt";
-    private String filepath = "MyFileStorage";
     File myExternalFile;
 
     @Override
