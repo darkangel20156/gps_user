@@ -43,17 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
-
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-//        showInfo = findViewById(R.id.show_info);
-//        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0x123);
-//    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,29 +67,6 @@ public class MainActivity extends AppCompatActivity {
             showInfo.setText("");
         }
     }
-//    @SuppressLint("MissingPermission")
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == 0x123 && grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//            //Create locationManger object
-//            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//            //Get the latest positioning information
-//            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//            updateView(lastKnownLocation);
-//
-////            pushData(lastKnownLocation);
-//            //Get GPS information every three seconds
-//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 8f, new LocationListener() {
-//                @Override
-//                public void onLocationChanged(@NonNull Location location) {
-//                    updateView(location);
-//                    // Push data
-//                    pushData(location);
-//                }
-//            });
-//        }
-//    }
 
     @SuppressLint("MissingPermission")
     @Override
@@ -159,24 +125,6 @@ public class MainActivity extends AppCompatActivity {
     private void requestLocationPermission() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
     }
-
-//    private void pushData(Location location) {
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("location");
-//
-//        if (location != null) {
-//            // Tạo một đối tượng Map để chứa dữ liệu cần đẩy lên
-//            Map<String, Double> locationData = new HashMap<>();
-//            locationData.put("longitude", location.getLongitude());
-//            locationData.put("latitude", location.getLatitude());
-//
-//            // Đẩy dữ liệu lên Firebase Realtime Database
-//            myRef.setValue(locationData);
-//        } else {
-//            // Xử lý trường hợp location là null nếu cần
-//            Log.e(TAG, "pushData: Location is null");
-//        }
-//    }
 
     private void pushData(Location location) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
