@@ -14,22 +14,18 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -43,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
+
+    private String filename = "SampleFile.txt";
+    private String filepath = "MyFileStorage";
+    File myExternalFile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
 
         showInfo = findViewById(R.id.show_info);
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0x123);
+
+        String filePath = getExternalFilesDir(null) + "/myLocationFile.txt";
+        myExternalFile = new File(filePath);
     }
 
     private void updateView(Location location) {
@@ -109,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         // Kiểm tra quyền truy cập vị trí
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // Nếu có quyền, lấy GPS information every three seconds
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 8f, new LocationListener() {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 8f, new LocationListener() {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
                     updateView(location);
@@ -141,57 +145,52 @@ public class MainActivity extends AppCompatActivity {
 
             // Lưu vị trí vào SD card
             locationChangeCount++;
-            saveLocationToFile(location, locationChangeCount);
+            saveLocationToSDCard(location, locationChangeCount);
         } else {
             // Xử lý trường hợp location là null nếu cần
             Log.e(TAG, "pushData: Location is null");
         }
     }
 
-//    private void saveLocationToSDCard(Location location, int count) {
-//        try {
-//            // Tạo một đối tượng File cho tệp tin lưu trữ vị trí
-//            File file = new File(Environment.getExternalStorageDirectory(), "location.txt");
-//
-//            // Mở luồng để ghi vào tệp tin
-//            FileWriter writer = new FileWriter(file, true);
-//
-//            // Ghi thông tin vị trí theo định dạng mong muốn
-//            writer.append(count + "th:\n");
-//            writer.append("Longitude = ").append(String.valueOf(location.getLongitude())).append("\n");
-//            writer.append("Latitude = ").append(String.valueOf(location.getLatitude())).append("\n\n");
-//
-//            // Đóng luồng ghi
-//            writer.close();
-//
-//            Log.d(TAG, "saveLocationToSDCard: Location saved to SD card");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            Log.e(TAG, "saveLocationToSDCard: Error saving location to SD card");
-//        }
-//    }
-
-    private void saveLocationToFile(Location location, int count) {
+    private void clearFileContent() {
         try {
-            // Tạo một đối tượng File cho tệp tin lưu trữ vị trí trong thư mục ứng dụng
-            File directory = getFilesDir();
-            File file = new File(directory, "location.txt");
+            FileOutputStream fos = new FileOutputStream(myExternalFile);
+            fos.close();
+            Log.d(TAG, "clearFileContent: File content cleared");
 
-            // Mở luồng để ghi vào tệp tin
-            FileWriter writer = new FileWriter(file, true);
-
-            // Ghi thông tin vị trí theo định dạng mong muốn
-            writer.append(count + "th:\n");
-            writer.append("Longitude = ").append(String.valueOf(location.getLongitude())).append("\n");
-            writer.append("Latitude = ").append(String.valueOf(location.getLatitude())).append("\n\n");
-
-            // Đóng luồng ghi
-            writer.close();
-
-            Log.d(TAG, "saveLocationToFile: Location saved to file");
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e(TAG, "saveLocationToFile: Error saving location to file");
+            Log.e(TAG, "clearFileContent: Error clearing file content");
+        }
+    }
+
+
+    private void saveLocationToSDCard(Location location, int count) {
+        clearFileContent();
+        try {
+            FileOutputStream fos = new FileOutputStream(myExternalFile, true); // Mở file để ghi thêm dữ liệu (true để append)
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
+
+            // Ghi số thứ tự
+            osw.write(count + ":\n");
+
+            // Ghi kinh độ và vĩ độ
+            osw.write("Longitude = " + location.getLongitude() + "\n");
+            osw.write("Latitude = " + location.getLatitude() + "\n");
+
+            // Đảm bảo dữ liệu được lưu xuống file
+            osw.flush();
+            fos.flush();
+
+            // Đóng các luồng
+            osw.close();
+            fos.close();
+
+            Log.d(TAG, "saveLocationToSDCard: Location saved to SD card");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "saveLocationToSDCard: Error saving location to SD card");
         }
     }
 }
